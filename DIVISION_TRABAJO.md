@@ -12,7 +12,7 @@
 
 ### Integrante 1 JORGE : Autenticación, Usuarios y Seguridad Base
 
-- **Nombre:** [Nombre del Integrante 1]
+- **Nombre:** [Jorge Gonzalez]
 - **Backend:**
   - Modelos de Usuario (`User`), Roles (`Admin`, `Organizer`, `Attendee`) y Sesiones.
   - Flujo de Auth: Registro, Login con JWT (Access & Refresh Tokens) y bcrypt/Argon2.
