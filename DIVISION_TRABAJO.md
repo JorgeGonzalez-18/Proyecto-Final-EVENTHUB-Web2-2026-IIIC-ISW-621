@@ -11,6 +11,12 @@
 
 ### Jorge: Autenticación, Usuarios, Seguridad y Notificaciones (Amazon SES)
 
+---
+
+- Branch sobre la que debe trabajar:feat/auth-users-ses
+
+---
+
 - **Nombre:** [Jorge]
 - **Backend:**
   - Modelos de Usuario (`User`), Roles (`Admin`, `Organizer`, `Attendee`) y Sesiones.
@@ -30,6 +36,12 @@
 ---
 
 ### Integrante 2: Gestión de Eventos, Categorías y Almacenamiento (Amazon S3)
+
+---
+
+- Branch sobre la que debe trabajar:feat/events-categories-s3
+
+---
 
 - **Nombre:** [Nombre]
 - **Backend:**
@@ -52,6 +64,12 @@
 
 ### Integrante 3: Reservaciones, Entradas QR, Concurrencia y Tareas Programadas (EventBridge)
 
+---
+
+- Branch sobre la que debe trabajar:feat/bookings-tickets-cron
+
+---
+
 - **Nombre:** [Nombre]
 - **Backend:**
   - Modelo de Reservación (`Booking`) y Entrada (`Ticket`).
@@ -72,6 +90,12 @@
 ---
 
 ### Integrante 4: Dashboards, Calificaciones y Función Serverless (Lambda + API Gateway)
+
+---
+
+- Branch sobre la que debe trabajar:feat/dashboards-reports-lambda
+
+---
 
 - **Nombre:** [Nombre]
 - **Backend:**
