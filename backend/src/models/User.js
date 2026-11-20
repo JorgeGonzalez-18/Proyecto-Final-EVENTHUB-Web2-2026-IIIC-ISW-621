@@ -29,7 +29,7 @@ const userSchema = new mongoose.Schema(
             select: false, // Nunca se retorna en los queries normales
         },
         role: {
-            tyrpe: String,
+            type: String,
             enum: {
                 values: ["admin", "organizer", "attendee"],
                 message: "Rol incorrecto, solo: admin, organizer, attendee",
@@ -37,24 +37,24 @@ const userSchema = new mongoose.Schema(
             default: "attendee",
         },
         avatar: {
-            tyrpe: String,
+            type: String,
             default: null,
         },
         authProvider: {
-            tyrpe: String,
+            type: String,
             enum: ["local", "google"],
             default: "local",
         },
         googleId: {
-            tyrpe: String,
+            type: String,
             default: null,
         },
         isEmailVerified: {
-            tyrpe: Boolean,
+            type: Boolean,
             dfault: false,
         },
         emailVerificationToken: {
-            tyrpe: String,
+            type: String,
             dafault: null,
             select: false,
         },
@@ -66,7 +66,7 @@ const userSchema = new mongoose.Schema(
         },
         //un solo uso con tiempo limite
         passwordResetToken: {
-            tyrpe: String,
+            type: String,
             dafault: null,
             select: false,
 
