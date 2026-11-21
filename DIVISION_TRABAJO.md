@@ -3,130 +3,92 @@
 ## Información General
 
 - **Proyecto:** EventHub – Plataforma de Gestión de Eventos y Reservaciones
-- **Arquitectura:** Backend (Node.js/Express 5 + MongoDB Atlas), Frontend (Vue 3 / Nuxt 3), Cloud (AWS: S3, Lambda, API Gateway, EventBridge, SES).
+- **Arquitectura:** Backend (Node.js/Express 5 + MongoDB Atlas), Frontend (Vue 3 / Nuxt 3), Cloud (AWS: SES, S3, Lambda, API Gateway, EventBridge Scheduler).
 
 ---
 
 ## Asignación de Roles y Módulos
 
-### Jorge: Autenticación, Usuarios, Seguridad y Notificaciones (Amazon SES)
+### Integrante 1: Autenticación, Seguridad, Notificaciones (Amazon SES) y Panel Admin
 
----
-
-- Branch sobre la que debe trabajar:feat/auth-users-ses
-
----
-
-- **Nombre:** [Jorge]
+- **Nombre:** Jorge González
+- **Rama Git:** `feat/auth-users-ses`
 - **Backend:**
-  - Modelos de Usuario (`User`), Roles (`Admin`, `Organizer`, `Attendee`) y Sesiones.
-  - Flujo de Auth: Registro, Login con JWT (Access & Refresh Tokens) y bcrypt/Argon2.
+  - Modelos de Usuario (`User`), Roles (`admin`, `organizer`, `attendee`) y Sesiones.
+  - Flujo de Auth: Registro, Login con JWT (Access & Refresh Tokens) y hashing seguro (bcrypt).
   - Integración de Google OAuth 2.0.
   - Middlewares de seguridad: `authMiddleware`, `roleMiddleware`, rate limiting, helmet y cors.
-  - Flujo de verificación de correo y recuperación de contraseña (tokens de un solo uso).
+  - Flujo de verificación de correo y recuperación de contraseña (tokens criptográficos de un solo uso).
+  - Panel Administrativo en backend: Endpoints de gestión de usuarios, cambio de roles y moderación global.
 - **Cloud (Amazon SES):**
   - Configuración del servicio de correo con Amazon SES.
-  - Servicio reutilizable de envío de correos (verificación, recuperación, confirmación de reservas y recordatorios).
+  - Servicio reutilizable de envío de correos (verificación de cuenta, restablecimiento de contraseña, confirmaciones y avisos).
 - **Frontend:**
-  - Vistas de Login, Registro, Recuperación de Contraseña y Callback de Google OAuth.
+  - Vistas de Login, Registro, Recuperación de Contraseña y Callback de Google.
+  - Vista del Panel de Administración (gestión de usuarios y métricas globales).
 - **Testing:**
-  - Pruebas automatizadas de autenticación, autorización y validación de tokens con Jest + Supertest.
-- **Defensa Técnica:** Domina el ciclo de vida de JWT, almacenamiento seguro de contraseñas, middlewares de protección e integración de Amazon SES.
+  - Pruebas automatizadas de autenticación, autorización de roles y tokens con Jest + Supertest.
+- **Defensa Técnica:** Domina el ciclo de vida de JWT, control de acceso por roles (RBAC), seguridad de contraseñas, integración de Amazon SES y administración de usuarios.
 
 ---
 
-### Integrante 2: Gestión de Eventos, Categorías y Almacenamiento (Amazon S3)
+### Integrante 2: Gestión de Eventos, Categorías, Reseñas, Almacenamiento (Amazon S3) y Dashboard Organizador
 
----
-
-- Branch sobre la que debe trabajar:feat/events-categories-s3
-
----
-
-- **Nombre:** [Nombre]
+- **Nombre:** Douglas O
+- **Rama Git:** `feat/events-reviews-s3`
 - **Backend:**
-  - Modelos de Evento (`Event`) y Categoría (`Category`).
+  - Modelos de Evento (`Event`), Categoría (`Category`) y Reseñas (`Review`).
   - CRUD completo de eventos (crear, editar propios, cancelar, publicar) y categorías.
-  - Filtros avanzados, búsqueda por texto, ordenamiento y paginación (utilizando `queryHelper`).
-  - Validación de esquemas con Zod / Express-validator.
+  - Filtros avanzados, búsqueda por texto, ordenamiento y paginación con `queryHelper`.
+  - Sistema de comentarios y calificaciones (validando que solo asistentes con reserva completada puedan calificar).
+  - Endpoints del Dashboard del Organizador (ocupación, porcentaje de asistencia, eventos activos y promedios de calificación con agregaciones de MongoDB).
 - **Cloud (Amazon S3):**
-  - Subida de imágenes de eventos a Amazon S3 (configuración de bucket, permisos, AWS SDK v3 y multer-s3).
-  - Mecanismo seguro de acceso a archivos multimedia.
+  - Subida y gestión de imágenes de eventos en Amazon S3 (configuración de bucket, AWS SDK v3 y multer-s3).
 - **Frontend:**
   - Catálogo público de eventos (buscador, filtros por categoría/fecha).
-  - Detalle del evento con información completa y galería de imágenes.
-  - Formulario de creación y edición de eventos para organizadores con subida de imagen.
+  - Detalle completo del evento con galería de imágenes y componente de comentarios/estrellas.
+  - Formulario de creación/edición de eventos para organizadores con carga de imágenes.
+  - Dashboard visual del Organizador (métricas y gráficos de ocupación).
 - **Testing:**
-  - Pruebas automatizadas de endpoints de eventos, categorías y filtros con Jest + Supertest.
-- **Defensa Técnica:** Domina consultas/agregaciones de MongoDB para filtros, manejo de almacenamiento en Amazon S3 y validación de esquemas.
+  - Pruebas automatizadas de endpoints de eventos, categorías, filtros y validación de reseñas con Jest + Supertest.
+- **Defensa Técnica:** Domina agregaciones en MongoDB para filtros y métricas, almacenamiento multimedia en Amazon S3 y reglas de negocio de eventos.
 
 ---
 
-### Integrante 3: Reservaciones, Entradas QR, Concurrencia y Tareas Programadas (EventBridge)
+### Integrante 3: Reservaciones, Entradas QR, Concurrencia, Serverless (Lambda) y Cron Job (EventBridge)
 
----
-
-- Branch sobre la que debe trabajar:feat/bookings-tickets-cron
-
----
-
-- **Nombre:** [Nombre]
+- **Nombre:** Alejandro U
+- **Rama Git:** `feat/bookings-tickets-cloud`
 - **Backend:**
-  - Modelo de Reservación (`Booking`) y Entrada (`Ticket`).
+  - Modelos de Reservación (`Booking`) y Entrada Digital (`Ticket`).
   - Lógica transaccional de reservación con control estricto de concurrencia y atomicidad en MongoDB (evitar sobreventa del último cupo disponible).
-  - Generación de entradas digitales únicas con códigos QR verificables.
-  - Endpoint de validación/escaneo de QR en puerta por parte del organizador (evitar reuso).
-  - Cancelación de reservaciones y liberación automática de cupos.
-- **Cloud (AWS EventBridge Scheduler):**
-  - Implementación del Cron Job programado diario (ej. 11:00 PM) para actualización de estados de eventos, recordatorios automáticos de eventos próximos y consolidación de datos.
+  - Generación de entradas digitales con códigos QR únicos y verificables.
+  - Endpoint de validación/escaneo de QR en puerta para organizadores (prevención estricta de reuso).
+  - Flujo de cancelación de reservaciones y liberación automática de cupos.
+- **Cloud (AWS Lambda, API Gateway y EventBridge):**
+  - AWS Lambda + API Gateway: Función serverless externa desacoplada para generación asíncrona de reportes PDF/CSV de eventos y guardado en S3.
+  - AWS EventBridge Scheduler: Cron Job programado automático (ej. diario a las 11:00 PM) para actualización de eventos finalizados y recordatorios.
+  - Comunicación del backend principal con API Gateway para solicitar y descargar reportes.
 - **Frontend:**
-  - Flujo de reservación de entradas en la interfaz.
-  - Vista "Mis Entradas / Historial" para el usuario asistente.
-  - Visor del código QR digital descargable o escaneable.
+  - Flujo interactivo de reservación de entradas.
+  - Vista "Mis Entradas / Historial" para asistentes con visor y descarga de código QR digital.
+  - Módulo de escaneo/validación de entradas para organizadores.
+  - Interfaz de solicitud y descarga de reportes PDF/CSV.
 - **Testing:**
-  - Pruebas automatizadas de reservaciones, disponibilidad y pruebas de concurrencia simultánea con Jest + Supertest.
-- **Defensa Técnica:** Domina operaciones atómicas (`findOneAndUpdate` / transacciones) en MongoDB, generación/verificación de QR y configuración de tareas programadas con EventBridge.
-
----
-
-### Integrante 4: Dashboards, Calificaciones y Función Serverless (Lambda + API Gateway)
-
----
-
-- Branch sobre la que debe trabajar:feat/dashboards-reports-lambda
-
----
-
-- **Nombre:** [Nombre]
-- **Backend:**
-  - Modelo de Reseñas / Calificaciones (`Review`).
-  - Validación de que solo usuarios con reservación completada puedan calificar/comentar.
-  - Endpoints para cálculo de promedios de calificación y moderación de comentarios para administradores.
-  - Endpoints de analítica y estadísticas para el Dashboard del Organizador (ocupación, ingresos, ventas en el tiempo).
-  - Endpoints para el Dashboard del Administrador (estadísticas globales, gestión de usuarios/eventos).
-- **Cloud (AWS Lambda + API Gateway):**
-  - Desarrollo de la función serverless externa desacoplada para generación asíncrona de reportes PDF/CSV de eventos y guardado en S3.
-  - Exposición de la función mediante Amazon API Gateway y consumo desde el backend principal.
-- **Frontend:**
-  - Dashboard visual del Organizador (gráficos y tablas de ocupación/reportes).
-  - Panel de control del Administrador.
-  - Componente de comentarios y calificaciones por estrellas en la página del evento.
-  - Interfaz de solicitud y descarga de reportes.
-- **Testing:**
-  - Pruebas automatizadas de reseñas, agregaciones de dashboards e integración con Lambda con Jest + Supertest.
-- **Defensa Técnica:** Domina el pipeline de agregación de MongoDB (`$group`, `$match`, `$project`, `$avg`), arquitectura desacoplada serverless con Lambda y API Gateway.
+  - Pruebas automatizadas de reservaciones, disponibilidad simultánea (concurrencia) y verificación de QR con Jest + Supertest.
+- **Defensa Técnica:** Domina operaciones atómicas y consistencia en MongoDB, generación/verificación criptográfica de QR, arquitectura serverless con Lambda y programación con EventBridge.
 
 ---
 
 ## Matriz de Cobertura de Criterios de Evaluación
 
-| Criterio del Enunciado                 | Puntos | Responsable Principal                             | Apoyo                             |
-| :------------------------------------- | :----: | :------------------------------------------------ | :-------------------------------- |
-| Arquitectura y organización Express    |   12   | Integrante 1                                      | Integrantes 2, 3                  |
-| Autenticación, OAuth y seguridad       |   12   | Integrante 1                                      | Integrante 1                      |
-| Funcionalidades y lógica de negocio    |   18   | Integrantes 2 y 3                                 | Integrante 4                      |
-| Diseño y manejo de MongoDB             |   8    | Integrantes 2, 3 y 4                              | Integrante 1                      |
-| Integraciones Cloud y Serverless (AWS) |   15   | Integrantes 4 (Lambda), 2 (S3), 3 (Cron), 1 (SES) | Todos                             |
-| Frontend y experiencia de usuario      |   7    | Todos (en sus respectivos módulos)                | Integrante 4 (UI/UX dashboards)   |
-| Testing, documentación y despliegue    |   8    | Todos (pruebas por módulo)                        | Integrante 1 (Setup inicial Jest) |
-| **Total**                              | **80** |                                                   |                                   |
+| Criterio del Enunciado                                 | Puntos | Responsable Principal                                                      |
+| :----------------------------------------------------- | :----: | :------------------------------------------------------------------------- |
+| Arquitectura y organización Express                    |   12   | Integrante 1 (Jorge)                                                       |
+| Autenticación, OAuth y seguridad                       |   12   | Integrante 1 (Jorge)                                                       |
+| Funcionalidades y lógica de negocio (Eventos/Reservas) |   18   | Integrantes 2 y 3                                                          |
+| Diseño y manejo de MongoDB                             |   8    | Integrantes 2 y 3 (Apoyo: 1)                                               |
+| Integraciones Cloud y Serverless (AWS)                 |   15   | Integrante 1 (SES), Integrante 2 (S3), Integrante 3 (Lambda + EventBridge) |
+| Frontend y experiencia de usuario                      |   7    | Todos en sus vistas                                                        |
+| Testing, documentación y despliegue                    |   8    | Todos en sus módulos (Setup: Integrante 1)                                 |
+| **Total**                                              | **80** |                                                                            |
